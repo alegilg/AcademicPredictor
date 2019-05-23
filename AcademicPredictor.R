@@ -95,13 +95,7 @@ df <- filter(admissions18_19, Name %in% notInEntry)
 df <- df[, c("ID", "Province", "Name", "Sex", "Career", "Entry", "EntryCourse", "Cal.Math", "Area", "Cal.Physics", "GraduationYear", "ResultOfEC", "Scholarship", "SchoolAverage", "SecondarySchool")]
 df
 
-df$IC.Average = NULL
-names(df)[2] <- "Status"
-names(df)[9] <- "Rec.Math"
-names(df)[11] <- "Rec.Physics"
-names(df)[6] <- "Cohort"
-names(df)[12] <- "IC.Average"
-names(df)[7] <- "Entry"
+names(df) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "Scholarship", "SchoolAverage", "SecondarySchool")
 
 change <- c("Ingeniería en Informática", "Ingeniería Industrial", "Ingeniería Biomédica")
 df$Career <- mapvalues(df$Career, change, c("INF", "IND", "BIO"))
