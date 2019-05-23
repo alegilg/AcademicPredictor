@@ -90,16 +90,7 @@ entry18_19[entry18_19 == "NaN"] <- NA
 
 notInEntry <- admissions18_19$Name[is.na(match(admissions18_19$Name, entry18_19$Name))]
 
-entry <- admissions18_19$Name %in% entry18_19$Name
+df <- filter(admissions18_19, Name %in% notInEntry)
 
-names(entry18_19)
-names(admissions18_19)
-
-notInEntryData <- admissions18_19$Name[admissions18_19$Name == notInEntry]
-notInEntryData
-##add 16
-##ent 15
-class(notInEntry)
-
-
+df
 
