@@ -1,9 +1,9 @@
 #Insert data
 library(readxl)
 getwd()
-admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
-entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
-entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
+##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
+##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
+##entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
 
 #Merging status ingenieria with estado del aspirante
 entry19$Estado.del..Aspirante[which(!is.na(entry19$Status..Ingeniería))] <- entry19$Status..Ingeniería[which(!is.na(entry19$Status..Ingeniería))]
@@ -82,10 +82,15 @@ entry18_19$Rec.Math = as.numeric(entry18_19$Rec.Math)
 entry18_19$Cal.Physics = as.numeric(entry18_19$Cal.Physics)
 entry18_19$Rec.Physics = as.numeric(entry18_19$Rec.Physics)
 
-
 entry18_19$IC.Average <- round(rowMeans(entry18_19[,8:11], na.rm = TRUE), digits = 2)
 entry18_19[entry18_19 == "NaN"] <- NA
 
+notInEntry <- admissions18_19$Name[is.na(match(admissions18_19$Name, entry18_19$Name))]
+notInEntry
 
+names(entry18_19)
+names(admissions18_19)
 
+notInEntryData <- admissions18_19$Name[admissions18_19$Name == notInEntry]
+notInEntryData
 
