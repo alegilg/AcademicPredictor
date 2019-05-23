@@ -1,5 +1,6 @@
 #Insert data
 library(readxl)
+library(dplyr)
 getwd()
 ##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
 ##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
@@ -88,7 +89,8 @@ entry18_19$IC.Average <- round(rowMeans(entry18_19[,8:11], na.rm = TRUE), digits
 entry18_19[entry18_19 == "NaN"] <- NA
 
 notInEntry <- admissions18_19$Name[is.na(match(admissions18_19$Name, entry18_19$Name))]
-notInEntry
+
+entry <- admissions18_19$Name %in% entry18_19$Name
 
 names(entry18_19)
 names(admissions18_19)
@@ -97,13 +99,7 @@ notInEntryData <- admissions18_19$Name[admissions18_19$Name == notInEntry]
 notInEntryData
 ##add 16
 ##ent 15
-admissions18_19$Nationality <- NULL
-admissions18_19$Province <- NA
-names(admissions18_19$Province) <- ""
-
-
-
-
+class(notInEntry)
 
 
 
