@@ -2,9 +2,9 @@
 library(readxl)
 library(dplyr)
 getwd()
-##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
-##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
-##entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
+admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
+entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
+entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
 
 #Merging status ingenieria with estado del aspirante
 entry19$Estado.del..Aspirante[which(!is.na(entry19$Status..Ingeniería))] <- entry19$Status..Ingeniería[which(!is.na(entry19$Status..Ingeniería))]
@@ -58,7 +58,7 @@ bajaPhrases <- c(entry18_19$Status[grep("baja",entry18_19$Status,TRUE)],"FEBRERO
 entry18_19$Status <- mapvalues(entry18_19$Status, bajaPhrases, rep("Baja", length(bajaPhrases)))
 
 names(entry18_19) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "Scholarship", "SchoolAverage", "SecondarySchool")
-names(admissions18_19) <- c("ID", "Entry", "Name", "Sex", "SecondarySchool", "Nationality", "Province", "Area", "GraduationYear", "Career", "EntryCourse", "Cal.Physics", "Cal.Math", "Scholarship", "SchoolAverage", "RecultOfEC")
+names(admissions18_19) <- c("ID", "Entry", "Name", "Sex", "SecondarySchool", "Nationality", "Province", "Area", "GraduationYear", "Career", "EntryCourse", "Cal.Physics", "Cal.Math", "Scholarship", "SchoolAverage", "ResultOfEC")
 admissions18_19$Province[which(admissions18_19$ID=="272")] <- NA
 
 admissions18_19[admissions18_19 == "Michael Ham (Nordelta)"] <- "Michael Ham"
@@ -92,5 +92,38 @@ notInEntry <- admissions18_19$Name[is.na(match(admissions18_19$Name, entry18_19$
 
 df <- filter(admissions18_19, Name %in% notInEntry)
 
+df <- df[, c("ID", "Province", "Name", "Sex", "Career", "Entry", "EntryCourse", "Cal.Math", "Area", "Cal.Physics", "GraduationYear", "ResultOfEC", "Scholarship", "SchoolAverage", "SecondarySchool")]
 df
+
+df$IC.Average = NULL
+names(df)[2] <- "Status"
+names(df)[9] <- "Rec.Math"
+names(df)[11] <- "Rec.Physics"
+names(df)[6] <- "Cohort"
+names(df)[12] <- "IC.Average"
+names(df)[7] <- "Entry"
+
+change <- c("Ingeniería en Informática", "Ingeniería Industrial", "Ingeniería Biomédica")
+df$Career <- mapvalues(df$Career, change, c("INF", "IND", "BIO"))
+
+df$Status <- NA
+df$Rec.Math <- NA
+df$Rec.Physics <- NA
+
+df$Cal.Math = as.numeric(df$Cal.Math)
+df$Rec.Math = as.numeric(df$Rec.Math)
+df$Cal.Physics = as.numeric(df$Cal.Physics)
+df$Rec.Physics = as.numeric(df$Rec.Physics)
+df$ResultOfEC = as.numeric(df$ResultOfEC)
+
+df$IC.Average <- round(rowMeans(df[,8:11], na.rm = TRUE), digits = 2)
+df$IC.Average[df$IC.Average == "NaN"] <- NA
+
+finalEntry <- rbind(entry18_19, df)
+finalEntry
+
+
+
+
+
 
