@@ -19,6 +19,8 @@ names(entry19)
 names(entry18)[7] <- "Ingreso" #Matching columns names
 entry18_19 <- rbind(entry19,entry18)
 
+
+
 #FIXING BECA DATA
 if (!is.element("plyr", installed.packages()[,1])){
   install.packages("plyr")
@@ -32,7 +34,7 @@ entry18_19$Beneficio..Solicitado....[which(entry18_19$Obtiene..BECA=="NO")] <- N
 names(entry18_19)
 entry18_19 <- entry18_19[,-15] #Delete Obtiene Beca because the negatives were clean up in beneficio solicitado
 entry18_19 <- entry18_19[,-13] #Delete Tipo de beneficio becuase it is not relevant for our study
-##names(entry18_19)[13] <- "Beca" #Changing name to beneficio solicitado
+names(entry18_19)[13] <- "Beca" #Changing name to beneficio solicitado
 #Replacing porcentaje otorgado values in Beca
 entry18_19$Beca[which(!is.na(entry18_19$Porcentaje..Otorgado))] <- entry18_19$Porcentaje..Otorgado[which(!is.na(entry18_19$Porcentaje..Otorgado))]
 entry18_19 <- entry18_19[,-15] #Delete Porcentaje Otorgado because the info was replace in Beca
@@ -93,4 +95,15 @@ names(admissions18_19)
 
 notInEntryData <- admissions18_19$Name[admissions18_19$Name == notInEntry]
 notInEntryData
+##add 16
+##ent 15
+admissions18_19$Nationality <- NULL
+admissions18_19$Province <- NA
+names(admissions18_19$Province) <- ""
+
+
+
+
+
+
 
