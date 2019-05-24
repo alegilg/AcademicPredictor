@@ -1,6 +1,9 @@
+#Librarys used
+library(plyr)
+library(dplyr)
+
 #Insert data
 library(readxl)
-library(dplyr)
 getwd()
 ##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
 ##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
@@ -42,7 +45,6 @@ entry18_19 <- rename(entry18_19, replace = c("RequestedBenefit" = "Scholarship")
 #Replacing percentage given values in scholarship
 entry18_19$Scholarship[which(!is.na(entry18_19$PercentageGiven))] <- entry18_19$PercentageGiven[which(!is.na(entry18_19$PercentageGiven))]
 entry18_19$PercentageGiven <- NULL #Delete percentage given because the info was replace in scholarship
-
 
 unique(entry18_19$Beca)
 scholarshipPhrases <- c("40/ 20","40/20","20/20")
