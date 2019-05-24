@@ -2,63 +2,64 @@
 library(readxl)
 library(dplyr)
 getwd()
-admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
-entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
-entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
+##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
+##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
+##entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
+admissions18_19 <- read_excel("Admissions18-19.xlsx")
+entry19 <- read_excel("Ingreso19.xlsx")
+entry18 <- read_excel("Ingreso18.xlsx")
 
-#Merging status ingenieria with estado del aspirante
-entry19$Estado.del..Aspirante[which(!is.na(entry19$Status..Ingeniería))] <- entry19$Status..Ingeniería[which(!is.na(entry19$Status..Ingeniería))]
-#Replacing status ingenieria in status
-entry19$Status <- entry19$Estado.del..Aspirante
-names(entry19)
-entry19 <- entry19[,-19]  #Delete status ingenieria because the its data is in estado del aspirante
-entry19 <- entry19[,-18]  #Delete estado del aspirante because the its data is in status
+
+#Defining colnames of the three data frames
+names(entry18) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "BenefitType", "RequestedBenefit", "GetScholarship", "SchoolAverage", "PercentageGiven", "School")
+names(entry19) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "BenefitType", "RequestedBenefit", "GetScholarship", "SchoolAverage", "PercentageGiven", "ApplicantStatus", "EngineeringStatus", "School")
+names(admissions18_19) <- c("ID", "Entry", "Name", "Sex", "School", "Nationality", "Province", "Area", "GraduationYear", "Career", "EntryCourse", "Cal.Physics", "Cal.Math", "Scholarship", "SchoolAverage", "RecultOfEC")
+
+#MODIFYING ENTRY19
+#Merging engineering status with applicant status
+entry19$ApplicantStatus[which(!is.na(entry19$EngineeringStatus))] <- entry19$EngineeringStatus[which(!is.na(entry19$EngineeringStatus))]
+#Replacing engineering status in status
+entry19$Status <- entry19$ApplicantStatus
+entry19$EngineeringStatus <- NULL  #Delete engineering status because its data is in applicant status
+entry19$ApplicantStatus <- NULL  #Delete applicant status because its data is in status
 
 #MERGING ENTRY18 WITH ENTRY19
-names(entry18)
-names(entry19)
-names(entry18)[7] <- "Ingreso" #Matching columns names
 entry18_19 <- rbind(entry19,entry18)
 
-
-
 #FIXING BECA DATA
-if (!is.element("plyr", installed.packages()[,1])){
-  install.packages("plyr")
-}
-library("plyr")
-unique(entry18_19$Obtiene..BECA)
+#All negative phrases in get scholarship to NO
+unique(entry18_19$GetScholarship)
 obtieneBecaPhrases <- c("MO","BAJA","NO OBTIENE","N/A","No","?",NA)
-entry18_19$Obtiene..BECA <- mapvalues(entry18_19$Obtiene..BECA, obtieneBecaPhrases, rep("NO", length(obtieneBecaPhrases)))
-entry18_19$Beneficio..Solicitado....[which(entry18_19$Obtiene..BECA=="NO")] <- NA
+entry18_19$GetScholarship <- mapvalues(entry18_19$GetScholarship, obtieneBecaPhrases, rep("NO", length(obtieneBecaPhrases)))
+#Deleting all requested benefit that were not obtained
+entry18_19$RequestedBenefit[which(entry18_19$GetScholarship=="NO")] <- NA
+
 
 names(entry18_19)
-entry18_19 <- entry18_19[,-15] #Delete Obtiene Beca because the negatives were clean up in beneficio solicitado
-entry18_19 <- entry18_19[,-13] #Delete Tipo de beneficio becuase it is not relevant for our study
-names(entry18_19)[13] <- "Beca" #Changing name to beneficio solicitado
-#Replacing porcentaje otorgado values in Beca
-entry18_19$Beca[which(!is.na(entry18_19$Porcentaje..Otorgado))] <- entry18_19$Porcentaje..Otorgado[which(!is.na(entry18_19$Porcentaje..Otorgado))]
-entry18_19 <- entry18_19[,-15] #Delete Porcentaje Otorgado because the info was replace in Beca
-#Suming the ones with two types of beca
+entry18_19$GetScholarship <- NULL #Delete get scholarship because the negatives were clean up in requested benefit
+entry18_19$BenefitType <- NULL #Delete benefit type becuase it is not relevant for our study
+entry18_19 <- rename(entry18_19, replace = c("RequestedBenefit" = "Scholarship")) #Changing requested benefit to scholarship
+#Replacing percentage given values in scholarship
+entry18_19$Scholarship[which(!is.na(entry18_19$PercentageGiven))] <- entry18_19$PercentageGiven[which(!is.na(entry18_19$PercentageGiven))]
+entry18_19$PercentageGiven <- NULL #Delete percentage given because the info was replace in scholarship
+
+
 unique(entry18_19$Beca)
-becaPhrases <- c("40/ 20","40/20","20/20")
-becaMeanings <- c("60","60","40")
-entry18_19$Beca <- mapvalues(entry18_19$Beca, becaPhrases, becaMeanings)
+scholarshipPhrases <- c("40/ 20","40/20","20/20")
+scholarshipMeanings <- c("60","60","40")
+entry18_19$Scholarship <- mapvalues(entry18_19$Scholarship, scholarshipPhrases, scholarshipMeanings)
 #Correcting the data of Beca to show only the number
-entry18_19$Beca[grepl("100",entry18_19$Beca)] <- "100" 
-entry18_19$Beca[!grepl("100",entry18_19$Beca)] <- substr(entry18_19$Beca[!grepl("100",entry18_19$Beca)], 1, 2)
+entry18_19$Scholarship[grepl("100",entry18_19$Scholarship)] <- "100" 
+entry18_19$Scholarship[!grepl("100",entry18_19$Scholarship)] <- substr(entry18_19$Scholarship[!grepl("100",entry18_19$Scholarship)], 1, 2)
 
 
 #Correcting status
 unique(entry18_19$Status)
 matriculadoPhrases <- c(entry18_19$Status[grep("matriculado",entry18_19$Status,TRUE)],"A - ASISTIÓ AL CURSO","HACE CUATRIMESTRAL")
 entry18_19$Status <- mapvalues(entry18_19$Status, matriculadoPhrases, rep("Matriculado", length(matriculadoPhrases)))
-
 bajaPhrases <- c(entry18_19$Status[grep("baja",entry18_19$Status,TRUE)],"FEBRERO",NA)
 entry18_19$Status <- mapvalues(entry18_19$Status, bajaPhrases, rep("Baja", length(bajaPhrases)))
 
-names(entry18_19) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "Scholarship", "SchoolAverage", "SecondarySchool")
-names(admissions18_19) <- c("ID", "Entry", "Name", "Sex", "SecondarySchool", "Nationality", "Province", "Area", "GraduationYear", "Career", "EntryCourse", "Cal.Physics", "Cal.Math", "Scholarship", "SchoolAverage", "ResultOfEC")
 admissions18_19$Province[which(admissions18_19$ID=="272")] <- NA
 
 admissions18_19[admissions18_19 == "Michael Ham (Nordelta)"] <- "Michael Ham"
