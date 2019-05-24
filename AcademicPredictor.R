@@ -16,7 +16,7 @@ entry18 <- read_excel("Ingreso18.xlsx")
 #Defining colnames of the three data frames
 names(entry18) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "BenefitType", "RequestedBenefit", "GetScholarship", "SchoolAverage", "PercentageGiven", "School")
 names(entry19) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "BenefitType", "RequestedBenefit", "GetScholarship", "SchoolAverage", "PercentageGiven", "ApplicantStatus", "EngineeringStatus", "School")
-names(admissions18_19) <- c("ID", "Entry", "Name", "Sex", "School", "Nationality", "Province", "Area", "GraduationYear", "Career", "EntryCourse", "Cal.Physics", "Cal.Math", "Scholarship", "SchoolAverage", "RecultOfEC")
+names(admissions18_19) <- c("ID", "Entry", "Name", "Sex", "School", "Nationality", "Province", "Area", "GraduationYear", "Career", "EntryCourse", "Cal.Physics", "Cal.Math", "Scholarship", "SchoolAverage", "ResultOfEC")
 
 #MODIFYING ENTRY19
 #Merging engineering status with applicant status
@@ -95,10 +95,10 @@ notInEntry <- admissions18_19$Name[is.na(match(admissions18_19$Name, entry18_19$
 
 df <- filter(admissions18_19, Name %in% notInEntry)
 
-df <- df[, c("ID", "Province", "Name", "Sex", "Career", "Entry", "EntryCourse", "Cal.Math", "Area", "Cal.Physics", "GraduationYear", "ResultOfEC", "Scholarship", "SchoolAverage", "SecondarySchool")]
+df <- df[, c("ID", "Province", "Name", "Sex", "Career", "Entry", "EntryCourse", "Cal.Math", "Area", "Cal.Physics", "GraduationYear", "ResultOfEC", "Scholarship", "SchoolAverage", "School")]
 df
 
-names(df) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "Scholarship", "SchoolAverage", "SecondarySchool")
+names(df) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "Scholarship", "SchoolAverage", "School")
 
 change <- c("Ingeniería en Informática", "Ingeniería Industrial", "Ingeniería Biomédica")
 df$Career <- mapvalues(df$Career, change, c("INF", "IND", "BIO"))
@@ -111,7 +111,7 @@ df$Cal.Math = as.numeric(df$Cal.Math)
 df$Rec.Math = as.numeric(df$Rec.Math)
 df$Cal.Physics = as.numeric(df$Cal.Physics)
 df$Rec.Physics = as.numeric(df$Rec.Physics)
-df$ResultOfEC = as.numeric(df$ResultOfEC)
+df$IC.Average = as.numeric(df$IC.Average)
 
 df$IC.Average <- round(rowMeans(df[,8:11], na.rm = TRUE), digits = 2)
 df$IC.Average[df$IC.Average == "NaN"] <- NA
