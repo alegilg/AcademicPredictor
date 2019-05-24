@@ -2,9 +2,12 @@
 library(readxl)
 library(dplyr)
 getwd()
-admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
-entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
-entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
+##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
+##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
+##entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
+admissions18_19 <- read_excel("Admissions18-19.xlsx")
+entry19 <- read_excel("Ingreso19.xlsx")
+entry18 <- read_excel("Ingreso18.xlsx")
 
 #Merging status ingenieria with estado del aspirante
 entry19$Estado.del..Aspirante[which(!is.na(entry19$Status..Ingeniería))] <- entry19$Status..Ingeniería[which(!is.na(entry19$Status..Ingeniería))]
