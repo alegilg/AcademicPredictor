@@ -41,12 +41,12 @@ entry18_19$RequestedBenefit[which(entry18_19$GetScholarship=="NO")] <- NA
 names(entry18_19)
 entry18_19$GetScholarship <- NULL #Delete get scholarship because the negatives were clean up in requested benefit
 entry18_19$BenefitType <- NULL #Delete benefit type becuase it is not relevant for our study
-entry18_19 <- rename(entry18_19, replace = c("RequestedBenefit" = "Scholarship")) #Changing requested benefit to scholarship
+names(entry18_19)[13] <- "Scholarship" #Changing requested benefit to scholarship
 #Replacing percentage given values in scholarship
 entry18_19$Scholarship[which(!is.na(entry18_19$PercentageGiven))] <- entry18_19$PercentageGiven[which(!is.na(entry18_19$PercentageGiven))]
 entry18_19$PercentageGiven <- NULL #Delete percentage given because the info was replace in scholarship
 
-unique(entry18_19$Beca)
+unique(entry18_19$Scholarship)
 scholarshipPhrases <- c("40/ 20","40/20","20/20")
 scholarshipMeanings <- c("60","60","40")
 entry18_19$Scholarship <- mapvalues(entry18_19$Scholarship, scholarshipPhrases, scholarshipMeanings)
@@ -63,18 +63,6 @@ bajaPhrases <- c(entry18_19$Status[grep("baja",entry18_19$Status,TRUE)],"FEBRERO
 entry18_19$Status <- mapvalues(entry18_19$Status, bajaPhrases, rep("Baja", length(bajaPhrases)))
 
 admissions18_19$Province[which(admissions18_19$ID=="272")] <- NA
-
-admissions18_19[admissions18_19 == "Michael Ham (Nordelta)"] <- "Michael Ham"
-admissions18_19[admissions18_19 == "Michael Ham (Vicente López)"] <- "Michael Ham"
-admissions18_19[admissions18_19 == "Lincoln (La Lucila)"] <- "Lincoln"
-admissions18_19[admissions18_19 == "Lincoln (Del Viso)"] <- "Lincoln"
-admissions18_19[admissions18_19 == "Northlands (Nordelta)"] <- "Northlands"
-admissions18_19[admissions18_19 == "Northlands (Olivos)"] <- "Northlands"
-admissions18_19[admissions18_19 == "Pilgrims´ (Gral. Pacheco)"] <- "Pilgrims´"
-admissions18_19[admissions18_19 == "Pilgrims´ (San Isidro)"] <- "Pilgrims´"
-admissions18_19[admissions18_19 == "St. Mary of the Hills (San Fernando)"] <- "St. Mary of the Hills"
-admissions18_19[admissions18_19 == "St. Mary of the Hills (Pilar)"] <- "St. Mary of the Hills"
-
 
 delete <- c("AUS", "ausente", "-", "A", "APROBADO", "Desaprobado", "Es pase", "x", "Es pase interno")
 
@@ -97,7 +85,6 @@ df <- filter(admissions18_19, Name %in% notInEntry)
 
 df <- df[, c("ID", "Province", "Name", "Sex", "Career", "Entry", "EntryCourse", "Cal.Math", "Area", "Cal.Physics", "GraduationYear", "ResultOfEC", "Scholarship", "SchoolAverage", "School")]
 df
-
 names(df) <- c("ID", "Status", "Name", "Sex", "Career", "Cohort", "Entry", "Cal.Math", "Rec.Math", "Cal.Physics", "Rec.Physics", "IC.Average", "Scholarship", "SchoolAverage", "School")
 
 change <- c("Ingeniería en Informática", "Ingeniería Industrial", "Ingeniería Biomédica")
@@ -119,7 +106,35 @@ df$IC.Average[df$IC.Average == "NaN"] <- NA
 finalEntry <- rbind(entry18_19, df)
 finalEntry
 unique(finalEntry$School)
+
 #Correcting schools
-finalEntry$School <- gsub(" \\(","|",finalEntry$School)
+finalEntry$School <- gsub(" \\(","|",finalEntry$School) #Deleting (x)
 finalEntry$School <- sub("\\|.*", "", finalEntry$School)
-finalEntry$School <- sapply(finalEntry$School, tolower)
+finalEntry$School <- sapply(finalEntry$School, tolower) #All to lower case
+
+#Correcting entry
+unique(finalEntry$Entry)
+febrero <- finalEntry$Entry[grep(("febrero"),finalEntry$Entry,TRUE)]
+correctFebrero <- rep("Febrero",length(febrero))
+
+directo <- finalEntry$Entry[grep(("directo"),finalEntry$Entry,TRUE)]
+correctDirecto <- rep("Directo",length(directo))
+
+cuatrimestral <- finalEntry$Entry[grep("cuatrimestral",finalEntry$Entry,TRUE)]
+correctCuatrimestral <- rep("Cuatrimestral",length(cuatrimestral))
+
+septiembre <- finalEntry$Entry[grep("septiembre",finalEntry$Entry,TRUE)]
+correctSeptiembre <- rep("Septiembre",length(septiembre))
+
+octubre <- finalEntry$Entry[grep("octubre",finalEntry$Entry,TRUE)]
+correctOctubre <- rep("Octubre",length(octubre))
+
+agosto <- finalEntry$Entry[grep("agosto",finalEntry$Entry,TRUE)]
+correctAgosto <- rep("Agosto",length(agosto))
+
+libre <- finalEntry$Entry[grep("libre",finalEntry$Entry,TRUE)]
+correctLibre <- rep("Libre",length(libre))
+
+entryPhrases <- c(febrero,directo,cuatrimestral,septiembre,octubre,agosto,libre)
+correctEntryPhrases <- c(correctFebrero,correctDirecto,correctCuatrimestral,correctSeptiembre,correctOctubre,correctAgosto,correctLibre)
+finalEntry$Entry <- mapvalues(finalEntry$Entry, entryPhrases, correctEntryPhrases)
