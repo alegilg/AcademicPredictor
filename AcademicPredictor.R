@@ -138,3 +138,21 @@ correctLibre <- rep("Libre",length(libre))
 entryPhrases <- c(febrero,directo,cuatrimestral,septiembre,octubre,agosto,libre)
 correctEntryPhrases <- c(correctFebrero,correctDirecto,correctCuatrimestral,correctSeptiembre,correctOctubre,correctAgosto,correctLibre)
 finalEntry$Entry <- mapvalues(finalEntry$Entry, entryPhrases, correctEntryPhrases)
+
+#Editing the cals from NA to 1 except those who enter as directo or pase universitario
+naCalsIndex <- which(!finalEntry$Entry=="Directo"&!finalEntry$Entry=="Pase Universitario"&is.na(finalEntry$IC.Average))
+finalEntry[naCalsIndex,8:12] <- 1
+
+
+#Plots
+library(ggplot2)
+
+barplot(prop.table(table(finalEntry$IC.Average)))
+
+pie(table(finalEntry$Entry), unique(finalEntry$Entry), col = rainbow(length(table(finalEntry$Entry))))
+
+hist(finalEntry$IC.Average)
+hist(finalEntry$Cal.Math)
+hist(finalEntry$Rec.Math)
+hist(finalEntry$Cal.Physics)
+hist(finalEntry$Rec.Physics)
