@@ -118,4 +118,8 @@ df$IC.Average[df$IC.Average == "NaN"] <- NA
 
 finalEntry <- rbind(entry18_19, df)
 finalEntry
-
+unique(finalEntry$School)
+#Correcting schools
+finalEntry$School <- gsub(" \\(","|",finalEntry$School)
+finalEntry$School <- sub("\\|.*", "", finalEntry$School)
+finalEntry$School <- sapply(finalEntry$School, tolower)
