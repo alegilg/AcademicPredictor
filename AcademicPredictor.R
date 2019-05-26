@@ -144,15 +144,61 @@ naCalsIndex <- which(!finalEntry$Entry=="Directo"&!finalEntry$Entry=="Pase Unive
 finalEntry[naCalsIndex,8:12] <- 1
 
 
-#Plots
+#PLOTS
 library(ggplot2)
+par(mfrow=c(1,1))
 
-barplot(prop.table(table(finalEntry$IC.Average)))
+#Status
+statusTable <- table(finalEntry$Status) 
+statusLabels <- names(statusTable)
+statusPercentage <- round(statusTable/sum(statusTable)*100)
+statusLabels <- paste(statusLabels, statusPercentage) # add percents to labels 
+statusLabels <- paste(statusLabels,"%",sep="") # ad % to labels 
+pie(statusTable,labels = statusLabels, col=rainbow(length(statusLabels)),main="Status")
 
-pie(table(finalEntry$Entry), unique(finalEntry$Entry), col = rainbow(length(table(finalEntry$Entry))))
+#Sex
+sexTable <- table(finalEntry$Sex) 
+sexLabels <- names(sexTable)
+sexPercentage <- round(sexTable/sum(sexTable)*100)
+sexLabels <- paste(sexLabels, sexPercentage) # add percents to labels 
+sexLabels <- paste(sexLabels,"%",sep="") # ad % to labels 
+pie(sexTable,labels = sexLabels, col=rainbow(length(sexLabels)),main="Sex")
 
+#Career
+careerTable <- table(finalEntry$Career) 
+careerLabels <- names(careerTable)
+careerPercentage <- round(careerTable/sum(careerTable)*100)
+careerLabels <- paste(careerLabels, careerPercentage) # add percents to labels 
+careerLabels <- paste(careerLabels,"%",sep="") # ad % to labels 
+pie(careerTable,labels = careerLabels, col=rainbow(length(careerLabels)),main="Career")
+
+#Entry
+entryTable <- table(finalEntry$Entry) 
+entryLabels <- names(entryTable)
+entryPercentage <- round(entryTable/sum(entryTable)*100)
+entryLabels <- paste(entryLabels, entryPercentage) # add percents to labels 
+entryLabels <- paste(entryLabels,"%",sep="") # ad % to labels 
+pie(entryTable,labels = entryLabels, col=rainbow(length(entryLabels)),main="Entry")
+
+#Cals
 hist(finalEntry$IC.Average)
 hist(finalEntry$Cal.Math)
 hist(finalEntry$Rec.Math)
 hist(finalEntry$Cal.Physics)
 hist(finalEntry$Rec.Physics)
+
+#Sex & Status
+counts <- table(finalEntry$Sex, finalEntry$Status)
+barplot(counts, col=c("red","darkblue"),legend = rownames(counts), beside=TRUE)
+
+#Sex & Career
+counts <- table(finalEntry$Sex, finalEntry$Career)
+barplot(counts, col=c("red","darkblue"),legend = rownames(counts), beside=TRUE)
+
+#Scholarship
+scholarshipTable <- table(is.na(finalEntry$Scholarship)) 
+scholarshipLabels <- c("Yes","No")
+scholarshipPercentage <- round(scholarshipTable/sum(scholarshipTable)*100)
+scholarshipLabels <- paste(scholarshipLabels, scholarshipPercentage) # add percents to labels 
+scholarshipLabels <- paste(scholarshipLabels,"%",sep="") # ad % to labels 
+pie(scholarshipTable,labels = scholarshipLabels, col=rainbow(length(scholarshipLabels)),main="Scholarship")
