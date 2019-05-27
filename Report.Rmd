@@ -10,28 +10,34 @@ knitr::opts_chunk$set(echo = TRUE)
 load(file="finalEntry.RData")
 ```
 
-## Status
-```{r status, echo=FALSE}
+## Informacion Basica General
+```{r info, echo=FALSE}
+par(mfrow=c(2,2))
+#Status
 statusTable <- table(finalEntry$Status) 
 statusLabels <- names(statusTable)
 statusPercentage <- round(statusTable/sum(statusTable)*100)
 statusLabels <- paste(statusLabels, statusPercentage) # add percents to labels 
 statusLabels <- paste(statusLabels,"%",sep="") # ad % to labels 
 pie(statusTable,labels = statusLabels, col=rainbow(length(statusLabels)),main="Status")
-```
 
-## Sex
-```{r sex, echo=FALSE}
+#Sex
 sexTable <- table(finalEntry$Sex) 
 sexLabels <- names(sexTable)
 sexPercentage <- round(sexTable/sum(sexTable)*100)
 sexLabels <- paste(sexLabels, sexPercentage) # add percents to labels 
 sexLabels <- paste(sexLabels,"%",sep="") # ad % to labels 
 pie(sexTable,labels = sexLabels, col=rainbow(length(sexLabels)),main="Sex")
-```
 
-## Career
-```{r career, echo=FALSE}
+#Scholarship
+scholarshipTable <- table(is.na(finalEntry$Scholarship)) 
+scholarshipLabels <- c("Yes","No")
+scholarshipPercentage <- round(scholarshipTable/sum(scholarshipTable)*100)
+scholarshipLabels <- paste(scholarshipLabels, scholarshipPercentage)
+scholarshipLabels <- paste(scholarshipLabels,"%",sep="") 
+pie(scholarshipTable,labels = scholarshipLabels, col=rainbow(length(scholarshipLabels)),main="Scholarship")
+
+#Career
 careerTable <- table(finalEntry$Career) 
 careerLabels <- names(careerTable)
 careerPercentage <- round(careerTable/sum(careerTable)*100)
@@ -59,10 +65,10 @@ ICAverageM <- finalEntry$IC.Average[which(finalEntry$Sex=="M")]
 hist(ICAverageM,breaks=10,col="darkblue")
 ```
 
-## Sex $ Status
+## Sex & Status
 ```{r Sex&Status, echo=FALSE}
 sexStatusTable <- table(finalEntry$Status,finalEntry$Sex)
-barplot(sexStatusTable, col=c("red","darkblue"),legend = rownames(sexStatusTable), beside=TRUE)
+barplot(sexStatusTable, col=c("red","darkblue"),legend = rownames(sexStatusTable))
 ```
 
 ## Sex & Career
@@ -71,22 +77,12 @@ sexCareerTable <- table(finalEntry$Sex, finalEntry$Career)
 barplot(sexCareerTable, col=c("red","darkblue"),legend = rownames(sexCareerTable))
 ```
 
-## Scholarsship
-```{r Scholarsship, echo=FALSE}
-scholarshipTable <- table(is.na(finalEntry$Scholarship)) 
-scholarshipLabels <- c("Yes","No")
-scholarshipPercentage <- round(scholarshipTable/sum(scholarshipTable)*100)
-scholarshipLabels <- paste(scholarshipLabels, scholarshipPercentage)
-scholarshipLabels <- paste(scholarshipLabels,"%",sep="") 
-pie(scholarshipTable,labels = scholarshipLabels, col=rainbow(length(scholarshipLabels)),main="Scholarship")
-```
-
 ## Entry & Status
 ```{r Entry&Status, echo=FALSE}
 entry <- finalEntry$Entry[which(!finalEntry$Entry == "Pase Universitario" & !finalEntry$Entry == "Directo")]
 status <- finalEntry$Status[which(!finalEntry$Entry == "Pase Universitario" & !finalEntry$Entry == "Directo")]
 entryStatusTable <- table(status, entry)
-barplot(entryStatusTable, col=c("red","darkblue"),legend = rownames(entryStatusTable))
+barplot(entryStatusTable, col=c("red","darkblue"),legend = rownames(entryStatusTable),xlim = c(0,6.5))
 ```
 
 ## Cohort & Sex
@@ -102,25 +98,34 @@ barplot(entryStatusTable, col=c("red","darkblue"),legend = rownames(entryStatusT
 ### Promedio {- .unnumbered}
 ```{r Promedio, echo=FALSE}
 ICAverage <- finalEntry$IC.Average
-hist(ICAverage,col = "red",main = "IC Average")
+hist(ICAverage,col = "red",main = "IC Average",breaks=(0:10))
 ```
 
 ### Matematica {- .unnumbered}
 ```{r Matematica, echo=FALSE}
 par(mfrow=c(1,2))
 CalMath <- finalEntry$Cal.Math
-hist(CalMath,main = "Cal Math")
+hist(CalMath,main = "Cal Math",breaks=(0:10))
 RecMath <- finalEntry$Rec.Math
-hist(RecMath,main = "Rec Math",breaks=(1:10))
+hist(RecMath,main = "Rec Math",breaks=(0:10))
 ```
 
 ### Fisica {- .unnumbered}
 ```{r Fisica, echo=FALSE}
 par(mfrow=c(1,2))
 CalPhysics <- finalEntry$Cal.Physics
-hist(CalPhysics,main = "Cal Physics")
+hist(CalPhysics,main = "Cal Physics",breaks=(0:10), ylab= "Poblacion")
 RecPhysics <- finalEntry$Rec.Physics
-hist(RecPhysics,main = "Rec Physics")
+hist(RecPhysics,main = "Rec Physics",breaks=(0:10))
+```
+
+### Test {- .unnumbered}
+```{r Test, echo=FALSE}
+par(mfrow=c(1,2))
+CalMath2 <- finalEntry$Cal.Math
+hist(CalMath2,main = "Cal Math",breaks=(0:10))
+CalMath3 <- table(finalEntry$Cal.Math)
+barplot(CalMath3,col=names(CalMath3))
 ```
 
 ## {.unnumbered}
