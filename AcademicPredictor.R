@@ -1,3 +1,4 @@
+save(finalEntry, file = "finalEntry.RData")
 #Librarys used
 library(plyr)
 library(dplyr)
@@ -140,8 +141,8 @@ correctEntryPhrases <- c(correctFebrero,correctDirecto,correctCuatrimestral,corr
 finalEntry$Entry <- mapvalues(finalEntry$Entry, entryPhrases, correctEntryPhrases)
 
 #Editing the cals from NA to 1 except those who enter as directo or pase universitario
-naCalsIndex <- which(!finalEntry$Entry=="Directo"&!finalEntry$Entry=="Pase Universitario"&is.na(finalEntry$IC.Average))
-finalEntry[naCalsIndex,8:12] <- 1
+#naCalsIndex <- which(!finalEntry$Entry=="Directo"&!finalEntry$Entry=="Pase Universitario"&is.na(finalEntry$IC.Average))
+#finalEntry[naCalsIndex,8:12] <- 1
 
 
 #PLOTS
@@ -181,19 +182,32 @@ entryLabels <- paste(entryLabels,"%",sep="") # ad % to labels
 pie(entryTable,labels = entryLabels, col=rainbow(length(entryLabels)),main="Entry")
 
 #Cals
-hist(finalEntry$IC.Average)
-hist(finalEntry$Cal.Math)
-hist(finalEntry$Rec.Math)
-hist(finalEntry$Cal.Physics)
-hist(finalEntry$Rec.Physics)
+ICAverage <- finalEntry$IC.Average
+hist(ICAverage,col = "red",main = "IC Average")
+CalMath <- finalEntry$Cal.Math
+hist(CalMath,main = "Cal Math")
+RecMath <- finalEntry$Rec.Math
+hist(RecMath,main = "Rec Math")
+CalPhysics <- finalEntry$Cal.Physics
+hist(CalPhysics,main = "Cal Physics")
+RecPhysics <- finalEntry$Rec.Physics
+hist(RecPhysics,main = "Rec Physics")
+
+#Sex & Average
+par(mfrow=c(1,2))
+ICAverageF <- finalEntry$IC.Average[which(finalEntry$Sex=="F")]
+hist(ICAverageF,breaks=10,col="red")
+ICAverageM <- finalEntry$IC.Average[which(finalEntry$Sex=="M")]
+hist(ICAverageM,breaks=10,col="darkblue")
+
 
 #Sex & Status
-counts <- table(finalEntry$Sex, finalEntry$Status)
-barplot(counts, col=c("red","darkblue"),legend = rownames(counts), beside=TRUE)
+sexStatusTable <- table(finalEntry$Status,finalEntry$Sex)
+barplot(sexStatusTable, col=c("red","darkblue"),legend = rownames(sexStatusTable), beside=TRUE)
 
 #Sex & Career
-counts <- table(finalEntry$Sex, finalEntry$Career)
-barplot(counts, col=c("red","darkblue"),legend = rownames(counts), beside=TRUE)
+sexCareerTable <- table(finalEntry$Sex, finalEntry$Career)
+barplot(sexCareerTable, col=c("red","darkblue"),legend = rownames(sexCareerTable), beside=TRUE)
 
 #Scholarship
 scholarshipTable <- table(is.na(finalEntry$Scholarship)) 
