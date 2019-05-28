@@ -97,7 +97,8 @@ entryStatusTable <- table(sex, cohort)
 barplot(entryStatusTable, col=c("red","darkblue"),legend = rownames(entryStatusTable))
 ```
 
-## Notas {.tabset .tabset-fade .tabset-pills .unnumbered}
+## Notas 2018 {.tabset .tabset-fade .tabset-pills .unnumbered}
+## Notas 2019{.tabset .tabset-fade .tabset-pills .unnumbered}
 
 ### Promedio {- .unnumbered}
 ```{r Promedio, echo=FALSE}
@@ -121,6 +122,16 @@ CalPhysics <- finalEntry$Cal.Physics
 hist(CalPhysics,main = "Cal Physics")
 RecPhysics <- finalEntry$Rec.Physics
 hist(RecPhysics,main = "Rec Physics")
+```
+
+
+### Fisica2 {- .unnumbered}
+```{r Fisica2, echo=FALSE}
+par(mfrow=c(1,2))
+CalPhysics2 <- finalEntry$Cal.Physics
+hist(CalPhysics2,main = "Cal Physics")
+RecPhysics3 <- table(finalEntry$Rec.Physics)
+barplot(RecPhysics3, col = "Blue", ylim=c(0,20), xlim=c(0,11), ylab ="Poblacion")
 ```
 
 ## {.unnumbered}
