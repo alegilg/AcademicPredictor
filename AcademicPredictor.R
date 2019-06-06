@@ -1,4 +1,3 @@
-save(finalEntry, file = "finalEntry.RData")
 #Librarys used
 library(plyr)
 library(dplyr)
@@ -9,7 +8,7 @@ getwd()
 ##admissions18_19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18-19.xlsx")
 ##entry19 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso19.xlsx")
 ##entry18 <- read_excel("/Users/Katy/Desktop/MuyNecesario/Predictor/Ingreso18.xlsx")
-admissions18_19 <- read_excel("Admissions18-19.xlsx")
+admissions18_19 <- read_excel("Ingreso18-19.xlsx")
 entry19 <- read_excel("Ingreso19.xlsx")
 entry18 <- read_excel("Ingreso18.xlsx")
 
@@ -106,7 +105,10 @@ df$IC.Average[df$IC.Average == "NaN"] <- NA
 
 finalEntry <- rbind(entry18_19, df)
 finalEntry
-unique(finalEntry$School)
+
+table(finalEntry$Cal.Physics)
+finalEntry$Cal.Physics <- trunc(finalEntry$Cal.Physics)
+finalEntry$IC.Average <- trunc(finalEntry$IC.Average)
 
 #Correcting schools
 finalEntry$School <- gsub(" \\(","|",finalEntry$School) #Deleting (x)
@@ -140,79 +142,10 @@ entryPhrases <- c(febrero,directo,cuatrimestral,septiembre,octubre,agosto,libre)
 correctEntryPhrases <- c(correctFebrero,correctDirecto,correctCuatrimestral,correctSeptiembre,correctOctubre,correctAgosto,correctLibre)
 finalEntry$Entry <- mapvalues(finalEntry$Entry, entryPhrases, correctEntryPhrases)
 
-#Editing the cals from NA to 1 except those who enter as directo or pase universitario
-#naCalsIndex <- which(!finalEntry$Entry=="Directo"&!finalEntry$Entry=="Pase Universitario"&is.na(finalEntry$IC.Average))
-#finalEntry[naCalsIndex,8:12] <- 1
+##table de colegios que traen mas gente
+topSchools <- c("St. John's    16", "Los Molinos     15", "St. Matthew's North     14", "Cardenal Newman     13", "Oakhill     13", "Northlands      11", "Los Robles      10", "St. Catherine's Moorlands     10", "Michael Ham     9", "Lincoln      9")
+amount <- c(16, 15, 14, 13, 13, 11, 10, 10, 9, 9)
 
 
-#PLOTS
-library(ggplot2)
-par(mfrow=c(1,1))
 
-#Status
-statusTable <- table(finalEntry$Status) 
-statusLabels <- names(statusTable)
-statusPercentage <- round(statusTable/sum(statusTable)*100)
-statusLabels <- paste(statusLabels, statusPercentage) # add percents to labels 
-statusLabels <- paste(statusLabels,"%",sep="") # ad % to labels 
-pie(statusTable,labels = statusLabels, col=rainbow(length(statusLabels)),main="Status")
-
-#Sex
-sexTable <- table(finalEntry$Sex) 
-sexLabels <- names(sexTable)
-sexPercentage <- round(sexTable/sum(sexTable)*100)
-sexLabels <- paste(sexLabels, sexPercentage) # add percents to labels 
-sexLabels <- paste(sexLabels,"%",sep="") # ad % to labels 
-pie(sexTable,labels = sexLabels, col=rainbow(length(sexLabels)),main="Sex")
-
-#Career
-careerTable <- table(finalEntry$Career) 
-careerLabels <- names(careerTable)
-careerPercentage <- round(careerTable/sum(careerTable)*100)
-careerLabels <- paste(careerLabels, careerPercentage) # add percents to labels 
-careerLabels <- paste(careerLabels,"%",sep="") # ad % to labels 
-pie(careerTable,labels = careerLabels, col=rainbow(length(careerLabels)),main="Career")
-
-#Entry
-entryTable <- table(finalEntry$Entry) 
-entryLabels <- names(entryTable)
-entryPercentage <- round(entryTable/sum(entryTable)*100)
-entryLabels <- paste(entryLabels, entryPercentage) # add percents to labels 
-entryLabels <- paste(entryLabels,"%",sep="") # ad % to labels 
-pie(entryTable,labels = entryLabels, col=rainbow(length(entryLabels)),main="Entry")
-
-#Cals
-ICAverage <- finalEntry$IC.Average
-hist(ICAverage,col = "red",main = "IC Average")
-CalMath <- finalEntry$Cal.Math
-hist(CalMath,main = "Cal Math")
-RecMath <- finalEntry$Rec.Math
-hist(RecMath,main = "Rec Math")
-CalPhysics <- finalEntry$Cal.Physics
-hist(CalPhysics,main = "Cal Physics")
-RecPhysics <- finalEntry$Rec.Physics
-hist(RecPhysics,main = "Rec Physics")
-
-#Sex & Average
-par(mfrow=c(1,2))
-ICAverageF <- finalEntry$IC.Average[which(finalEntry$Sex=="F")]
-hist(ICAverageF,breaks=10,col="red")
-ICAverageM <- finalEntry$IC.Average[which(finalEntry$Sex=="M")]
-hist(ICAverageM,breaks=10,col="darkblue")
-
-
-#Sex & Status
-sexStatusTable <- table(finalEntry$Status,finalEntry$Sex)
-barplot(sexStatusTable, col=c("red","darkblue"),legend = rownames(sexStatusTable), beside=TRUE)
-
-#Sex & Career
-sexCareerTable <- table(finalEntry$Sex, finalEntry$Career)
-barplot(sexCareerTable, col=c("red","darkblue"),legend = rownames(sexCareerTable), beside=TRUE)
-
-#Scholarship
-scholarshipTable <- table(is.na(finalEntry$Scholarship)) 
-scholarshipLabels <- c("Yes","No")
-scholarshipPercentage <- round(scholarshipTable/sum(scholarshipTable)*100)
-scholarshipLabels <- paste(scholarshipLabels, scholarshipPercentage) # add percents to labels 
-scholarshipLabels <- paste(scholarshipLabels,"%",sep="") # ad % to labels 
-pie(scholarshipTable,labels = scholarshipLabels, col=rainbow(length(scholarshipLabels)),main="Scholarship")
+save(finalEntry, file = "finalEntry.RData")
